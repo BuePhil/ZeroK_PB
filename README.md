@@ -34,3 +34,37 @@ True|true|TRUE|TT|tt|T|t
 
 ## Variable declaration
 <type> # <ident> <- <value>
+
+## Arrays
+<type>[<size>] # <ident>
+<ident>[<index>]
+
+## Lists
+list with <type> # <ident>
+<ident>.get(<index>)
+
+### Statements
+Every Statement end with ';'
+
+## Conditional statements
+if (<cond>) do
+  <block>
+elif (<cond>) do
+  <block>
+else do
+  <block>
+done;
+
+elif and else blocks aren't required.
+
+## Iteration
+until (<cond>) do
+  <block>
+done;
+
+Until the condition becomes True, the loop will continue
+
+do
+  <block>
+done
+until(<cond>);
