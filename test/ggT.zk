@@ -1,0 +1,15 @@
+(: WTF :)
+
+func # ggT <- with (int # x, int # y) => int do    
+    until (y = 0du) do
+        if x>y do
+            x <- x - y;
+        else do
+            y <- y - x;
+        done;
+    done;
+
+    return x;
+done;
+
+print(ggT(8du,5du) + " << ggT");

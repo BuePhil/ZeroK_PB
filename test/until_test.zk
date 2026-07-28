@@ -1,0 +1,16 @@
+int # i <- 8du;
+
+do
+    print(i);
+
+    if (i = 5du) do
+        i <- 800du;
+        break;
+    done;
+
+    i <- i - 1du;
+done
+until(i = 0du);
+
+
+print(i);

@@ -1,0 +1,9 @@
+func # fact <- with (int # n) => int do
+    if (n = 0du) do
+        return 1du
+    else do
+        return (n * fact(n-1du))
+    done
+done
+
+print("Fakultaet von 5 >> " + fact(5du))

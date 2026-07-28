@@ -1,0 +1,5 @@
+int # x
+
+x <- 1du
+
+print("x: " + x)

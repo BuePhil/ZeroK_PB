@@ -1,0 +1,13 @@
+bool # test_var <- 22du;
+int # p <- !!TT;
+
+string# test <- # with (string# x, int# y) => string do 
+    print("lambda");
+    print(test_var);
+done;
+
+test_var <- 8900du;
+
+test("n", "y");
+
+print(test_var);
