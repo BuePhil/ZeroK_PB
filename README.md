@@ -33,18 +33,18 @@ True|true|TRUE|TT|tt|T|t
 &&, ||, ^^, !!
 
 ## Variable declaration
-```
+```python
 <type> # <ident> <- <value>
 ```
 
 ## Arrays
-```
+```python
 <type>[<size>] # <ident>
 <ident>[<index>]
 ```
 
 ## Lists
-```
+```python
 list with <type> # <ident>
 <ident>.get(<index>)
 ```
@@ -53,7 +53,7 @@ list with <type> # <ident>
 Every Statement end with ';'
 
 ## Conditional statements
-```
+```python
 if (<cond>) do
   <block>
 elif (<cond>) do
@@ -65,14 +65,15 @@ done;
 elif and else blocks aren't required.
 
 ## Iteration
-```
+```python
 until (<cond>) do
   <block>
 done;
 ```
 Until the condition becomes True, the loop will continue
-
+```python
 do
   <block>
 done
 until(<cond>);
+```
