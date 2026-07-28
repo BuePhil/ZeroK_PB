@@ -84,7 +84,7 @@ def ev_exp(ast, env):
         case ('lambda', args, ty, body):
             env_ = Env()
 
-            for name in fv_exp(ast):
+            for name in fv_exp(ast): # Speichern von freien Variablen für das env vom lambda Ausdruck
                 entry = env.lookup(name)
 
                 new = env_.put(name)

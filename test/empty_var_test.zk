@@ -1,5 +1,5 @@
-int # x
+int # x;
 
-x <- 1du
+x <- 1du;
 
-print("x: " + x)
+print("x: " + x);

@@ -1,11 +1,14 @@
-int # var1 <- 10du
+(: Shadowing testing :)
+
+int # var1 <- 10du;
 
 func # shadowing_test <- with (int # p) => int do
-    int # var1 <- 15du
+    int # var1 <- 15du;
 
-    var1 <- p + var1
+    var1 <- p + var1;
 
-    return var1
-done
+    return var1;
+done;
 
-print(shadowing_test(10du))
+print(shadowing_test(10du));
+print("var1: " + var1);

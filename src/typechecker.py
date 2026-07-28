@@ -17,8 +17,8 @@ unops = {
 
 binops = {
     #       opt 1                   opt 2
-    '+' : (
-    (('int', 'int'), 'int'),
+    '+' : (                        # + hat mehrere Regeln, da es auch für die konkaternierung mit Strings funktioniert
+    (('int', 'int'), 'int'),       # TODO: für Listen und Arrays diese konkatenierung hinzufügen
     (('string', 'string'), 'string'),
     (('int', 'string'), 'string'),
     (('string', 'int'), 'string'),
@@ -88,7 +88,7 @@ def ty_expr(node, env):
         case ('lambda', args, ty, body):
             return check_lambda(args, ty, body, env)
 
-        case ('array', values):
+        case ('array', values):     # Vereinfachung zum Typchecken von Arrays
             if not values:
                 return ('array', None, 0)
 
@@ -101,7 +101,7 @@ def ty_expr(node, env):
 
             return ('array', elem_ty, len(values))
 
-        case ('list', values):
+        case ('list', values):     # Vereinfachung zum Typchecken von Listen
             if not values:
                 return ('list', None)
 
