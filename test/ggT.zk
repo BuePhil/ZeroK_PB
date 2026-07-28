@@ -12,4 +12,4 @@ func # ggT <- with (int # x, int # y) => int do
     return x;
 done;
 
-print(ggT(8du,5du) + " << ggT");
+print(ggT(8du, 48du) + " << ggT");

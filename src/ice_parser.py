@@ -65,14 +65,77 @@ def p_expression_unop(p):
                   | MINUS expression'''
     p[0] = ('unop', p[1], p[2])
 
+# Array expression rules
+# Array Deklaration: type, ident, size, array
+def p_array_decl_l(p):
+    '''declaration : TYPE LBRACKET size RBRACKET HASH IDENTIFIER LASSIGN array
+                   | TYPE LBRACKET size RBRACKET HASH IDENTIFIER'''
+    if len(p)==7:
+        p[0] = ('decl_var', 'array', p[1], p[6], p[3], None)
+    else:
+        p[0] = ('decl_var', 'array', p[1], p[6], p[3], p[8])
+
+def p_array_decl_r(p):
+    '''declaration : array RASSIGN IDENTIFIER HASH LBRACKET size RBRACKET TYPE
+                   | IDENTIFIER HASH LBRACKET size RBRACKET TYPE'''
+    
+    if len(p)==7:
+        p[0] = ('decl_var', 'array', p[6], p[1], p[4])
+    else:
+        p[0] = ('decl_var', 'array', p[8], p[3], p[6], p[1])
+
+def p_array_size(p):
+    '''size : INDEX
+            | empty'''
+    p[0] = p[1] if len(p) == 2 else None
+
+def p_empty(p):
+    'empty :'
+    pass
+
 def p_expr_array(p):
-    'expression : LBRACKET arg_list RBRACKET'
+    'array : LBRACKET arg_list RBRACKET'
     p[0] = ('array', p[2])
 
+def p_array_get(p):
+    'expression : IDENTIFIER LBRACKET INDEX RBRACKET'
+    p[0] = ('array_get', p[1], p[3])
+
+# List expression rules
+def p_list_type_l(p):
+    '''list_type_l : LIST WITH TYPE'''
+    p[0] = p[3]
+
+def p_list_type_r(p):
+    'list_type_r : TYPE WITH LIST'
+    p[0] = p[1]
+
+# Listen Deklaration: type, ident, liste
+def p_list_decl_l(p):
+    '''declaration : list_type_l HASH IDENTIFIER
+                   | list_type_l HASH IDENTIFIER LASSIGN list'''
+    if len(p)==4:
+        p[0] = ('decl_var', 'list', p[1], p[3], None)
+    else:
+        p[0] = ('decl_var', 'list', p[1], p[3], p[5])
+
+def p_list_decl_r(p):
+    '''declaration : IDENTIFIER HASH list_type_r
+                   | list RASSIGN IDENTIFIER HASH list_type_r'''
+    if len(p)==4:
+        p[0] = ('decl_var', 'list', p[3], p[1], None)
+    else:
+        p[0] = ('decl_var', 'list', p[5], p[3], p[1])
+
 def p_expr_list(p):
-    'expression : LPAREN arg_list RPAREN'
+    'list : LPAREN arg_list RPAREN'
     p[0] = ('list', p[2])
 
+def p_list_get(p):
+    'expression : IDENTIFIER DOT GET LPAREN INDEX RPAREN'
+    p[0] = ('list_get', p[1], p[5])
+
+# Argumente der Arrays und Listen
 def p_arg_list(p):
     '''arg_list : expression COMMA arg_list
                 | expression'''

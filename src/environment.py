@@ -1,6 +1,10 @@
 from dataclasses import dataclass
 from typing import Any
 
+# Erzeugung des Environments
+def make_ev_env():
+    return Env()
+
 class Env:
     # Eine Liste die ein Parent und ein Dictionary hat.
     # das Dictionary enthält alle, im Scope existierenden
@@ -37,7 +41,7 @@ class Env:
 
             env = env.parent
     
-        raise NameError(f"Reference with name {name} doesn't exist")
+        raise NameError(f"Reference with name '{name}' doesn't exist")
     
     def exist_func(self, name):
         try:

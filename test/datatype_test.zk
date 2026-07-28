@@ -1,0 +1,7 @@
+int[3] # arr <- [1du, 2du, 3xs];
+
+print(arr[0]);
+
+list with bool # lst <- (t, TT, !!TRUE);
+
+print(lst.get(3));

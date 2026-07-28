@@ -13,7 +13,9 @@ reserve = (
     'print',
     'with',
     'func',
-    'return'
+    'return',
+    'get',
+    'list'
 )
 
 reserved = {i:i.upper() for i in reserve}
@@ -56,8 +58,10 @@ tokens = [
     'CHAR',
     'STRING',
     'SEMICOLON',
+    'DOT',
     'LBRACKET',
-    'RBRACKET'
+    'RBRACKET',
+    'INDEX'
 ] + list(reserved.values())
 
 #t_NUMBER = r'\d+'
@@ -88,6 +92,7 @@ t_RASSIGN = r'\-\>'
 t_FUNCARROW = r'\=\>'
 t_COMMA = r'\,'
 t_SEMICOLON = r'\;'
+t_DOT = r'\.'
 t_LBRACKET = r'\['
 t_RBRACKET = r'\]'
 
@@ -119,10 +124,15 @@ def t_TYPE(t):
     return t
 
 def t_NUMBER(t):
-    r'([01]+b|[0-5]+s|[0-7]+o|[0-9]+d|[0-9a-fA-F]+x)(u|s)'
+    r'(([01]+b|[0-5]+s|[0-7]+o|[0-9]+d|[0-9a-fA-F]+x)(u|s))\b'
 
     n, b, ty = (str.lower() for str in [t.value[:-2], t.value[-2], t.value[-1]])
     t.value = (n, bases[b], ty)
+    return t
+
+def t_INDEX(t):
+    r'[0-9]+'
+    t.value = int(t.value)
     return t
 
 def t_BOOLEAN(t):

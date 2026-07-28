@@ -6,9 +6,10 @@ from ice_parser import parser
 import typechecker as tc
 from environment import *
 from dataclasses import dataclass
-from IceInt import IceInt
+from Types import *
 from ReturnSignal import ReturnSignal
 from iter_control import *
+from free_vars import *
 
 binops = {
     '+': lambda x, y: IceInt(x.value + y.value, x.base, x.ty),
@@ -48,7 +49,16 @@ def ev_exp(ast, env):
     if isinstance(ast, IceInt):
         return ast
 
+    if isinstance(ast, IceArray):
+        return ast
+
+    if isinstance(ast, IceList):
+        return ast
+
     if isinstance(ast, bool):
+        return ast
+
+    if isinstance(ast, str):
         return ast
 
     match ast:
@@ -62,9 +72,10 @@ def ev_exp(ast, env):
         case ('binop', op, lexp, rexp):
             left = ev_exp(lexp, env)
             right = ev_exp(rexp, env)
-
-            if isinstance(left, str) or isinstance(right, str):
-                return str(left) + str(right)
+            
+            if op == '+':
+                if isinstance(left, str) or isinstance(right, str):
+                    return str(left) + str(right)
 
             return binops[op](left, right)
         case ('func_call', name, args):
@@ -81,7 +92,16 @@ def ev_exp(ast, env):
                 new.value = entry.value
 
             return Closure(args, body, env_)
+        case ('array_get', name, index):
+            val = env.value(name)
 
+            if isinstance(val, IceArray):
+                return val.value[index]
+        case ('list_get', name, index):
+            val = env.value(name)
+
+            if isinstance(val, IceList):
+                return val.value[index]
         case _: raise SyntaxError
 
 # Evaluierung der im Parser definierten Statements
@@ -101,7 +121,7 @@ def ev_stms(ast, env):
                 ev_iter(arg[1:], env)
             case 'func_decl':
                 ev_func_decl(arg[1:], env)
-            case ('func_call'):
+            case 'func_call':
                 ev_exp(arg, env)
             case 'return':
                 value = ev_exp(arg[1], env)
@@ -114,63 +134,52 @@ def ev_stms(ast, env):
                 raise OnBreakSignal(arg[1])
         pass
 
-def fv_exp(exp):
-    match exp: 
-        case ('var', name):
-            return {name}
-        case ('binop', op, lexp, rexp):
-            return fv_exp(lexp) | fv_exp(rexp)
-        case ('func_call', name, args):
-            fvs = fv_exp(name)
-            for arg in args: fvs |= fv_exp(arg)
-            return fvs
-        case ('lambda', args, ty, body):
-            return fv_stm(body) - {name for name, ty in args}
-        case _: return set()
-
-def fv_stm(stms):
-    if len(stms) == 0: return set()
-    head, tail = stms[0], stms[1:]
-    fv, bv = set(), set()
-
-    match head:
-        case ('decl_var', ty, name, exp):
-            fv = fv_exp(exp); bv = {name}
-        case ('print', body):
-            fv = fv_exp(body)
-        case _: fv = set()
-
-    return fv | (fv_stm(tail) - bv)
-
 def ev_assign(arg, env):
     value = ev_exp(arg[1], env)
     env.assign_var(arg[0], value)
 
 # Evaluierung der Deklaration
 def ev_decl(decl, env):
-    env.put(decl[1]).ty = decl[0]
+    var_ty = decl[0]
 
-    val = decl[2]    
-    
-    if val is not None:
-        if(val[0] == 'lambda'):
-            val = ev_exp(val, env)
+    if var_ty=='array':
+        var_ty = decl[1]
+        arr = decl[4]
+        if arr is not None:
+            arr = [ev_exp(elem, env) for elem in arr[1]]
+        env.put(decl[2]).ty = ('array', var_ty, decl[3])
+        env.assign_var(decl[2], IceArray(decl[3], arr, var_ty))
+    elif var_ty=='list':
+        var_ty = decl[1]
+        lst = decl[3]
+        if lst is not None:
+            lst = [ev_exp(elem, env) for elem in lst[1]]
+        env.put(decl[2]).ty = ('list', var_ty)
+        env.assign_var(decl[2], IceList(lst, var_ty))
+    else:
+        env.put(decl[1]).ty = decl[0]
+
+        val = decl[2]    
         
-        env.assign_var(decl[1], val)
+        if val is not None:
+            if(val[0] == 'lambda'):
+                val = ev_exp(val, env)
+            
+            env.assign_var(decl[1], val)
     pass
 
 def ev_cond(ast, env):
-    _env = env.push()
+    # in cond wird nicht zu beginn _env erstellt, sondern ausgesondert für jeden Block
     if ev_exp(ast[0], env):
-        ev_stms(ast[1], _env)
+        ev_stms(ast[1], env.push())
     else:
         if not ast[2]: # elif Liste ist leer >> else block wird ausgeführt
             if not (ast[3] is None): # else Fall existiert
-                ev_stms(ast[3], _env)
+                ev_stms(ast[3], env.push())
         else:
             for el in ast[2]:
                 if ev_exp(el[0], env):
-                    ev_stms(el[1], _env)
+                    ev_stms(el[1], env.push())
                     break
     pass
 
@@ -215,7 +224,3 @@ def ev_iter(ast, env):
         except OnBreakSignal as ob:
             ev_stms(ob.value, _env)
             break
-
-# Erzeugung des Environments
-def make_ev_env():
-    return Env()

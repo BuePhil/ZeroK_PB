@@ -1,7 +1,7 @@
 from ice_lexer import lexer
 from ice_parser import parser
 from interpreter import interpret
-from typechecker import ty_expr
+from typechecker import typecheck
 from pathlib import Path
 import sys
 from anytree import Node, RenderTree
@@ -12,8 +12,11 @@ def main(code):
         ast = parser.parse(code)
         show_tree(ast)
 
-        #ty = ty_expr(ast)
-        value = interpret(ast)
+        try:
+            typecheck(ast)
+            interpret(ast)
+        except TypeError as ty_err:
+            print(f"Error: Type Issue '{ty_err}'")
     except EOFError:
         print("whoops!!!!!!")
     
@@ -49,13 +52,3 @@ if file_path.suffix == ".zk":
     main(file_content)
 else:
     print("Unkown file extension")
-
-'''while True:
-    try:
-        s=input()
-    except EOFError:
-        break
-    if not s : continue
-
-    result = s
-    main(result)'''
