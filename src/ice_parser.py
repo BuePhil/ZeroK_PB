@@ -292,7 +292,7 @@ def p_break_stm(p):
 
 def p_on_break_stm(p):
     'onbrk : ONBREAK statement'
-    p[0] = ('onbrk', p[2])
+    p[0] = ('onbrk', [p[2]])
 
 # Programm Regel
 def p_program_multiple(p):

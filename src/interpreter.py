@@ -32,10 +32,10 @@ binops = {
 }
 
 unops = {
-    '!'  : lambda x : ~x.value, # Usage of Pythons itegrated bitwise not operator
-    '!!' : lambda x : not x,
-    '-'  : lambda x : -x.value
-}
+    '!'  : lambda x : IceInt(~x.value, x.base, x.ty), # Usage of Pythons itegrated bitwise not operator
+    '!!' : lambda x : not x,                          # bool not
+    '-'  : lambda x : IceInt(-x.value, x.base, x.ty)
+} # Rückgabe war zuvor python int, was Fehler verursacht hat.
 
 # Main function for correct interpreting of parenthesises, operators and types
 def interpret(prog):
