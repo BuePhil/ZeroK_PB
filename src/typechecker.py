@@ -1,6 +1,5 @@
-import sys
-
-sys.path.insert(0, "../classes")
+# print(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "classes"))
+# sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "classes"))
 
 from environment import *
 from Types import *
