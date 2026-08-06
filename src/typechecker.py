@@ -1,6 +1,6 @@
 import sys
 
-sys.path.insert(0, "./classes")
+sys.path.insert(0, "../classes")
 
 from environment import *
 from Types import *
